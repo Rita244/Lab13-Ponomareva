@@ -144,3 +144,90 @@
 //     {
 //     }
 // }
+
+// ### Шаг 12. Собираем обработку исключений в калькулятор
+
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        bool exit = false;
+        
+        do
+        {
+            try
+            {
+                Console.Write("Введите первое число: ");
+                string input1 = Console.ReadLine()!;
+                
+                Console.Write("Введите второе число: ");
+                string input2 = Console.ReadLine()!;
+                
+                Console.Write("Введите операцию (+, -, *, /): ");
+                string operation = Console.ReadLine()!;
+
+                int num1 = int.Parse(input1);
+                int num2 = int.Parse(input2);
+
+                double result = 0;
+
+                switch (operation)
+                {
+                    case "+":
+                        result = num1 + num2;
+                        break;
+                    case "-":
+                        result = num1 - num2;
+                        break;
+                    case "*":
+                        result = num1 * num2;
+                        break;
+                    case "/":
+                        if (num2 == 0)
+                        {
+                            throw new DivideByZeroException();
+                        }
+                        result = (double)num1 / num2;
+                        break;
+                    default:
+                        throw new UnknownOperationException($"Неизвестная операция: {operation}");
+                }
+
+                Console.WriteLine($"Результат: {result}");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Ошибка: некорректный ввод числа.");
+            }
+            catch (DivideByZeroException)
+            {
+                Console.WriteLine("Ошибка: деление на ноль.");
+            }
+            catch (UnknownOperationException ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+            finally
+            {
+                Console.WriteLine("-------------------------");
+            }
+
+            Console.WriteLine("Хотите продолжить? (y/n)");
+            string answer = Console.ReadLine()!;
+            if (answer.ToLower() == "n")
+            {
+                exit = true;
+            }
+
+        } while (!exit);
+    }
+}
+
+class UnknownOperationException : Exception
+{
+    public UnknownOperationException(string message) : base(message)
+    {
+    }
+}
